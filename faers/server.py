@@ -82,6 +82,8 @@ mcp = FastMCP(
         "or raise the client timeout."
     ),
 )
+# FastMCP 1.x reports the mcp library's version in serverInfo unless told otherwise.
+mcp._mcp_server.version = __version__
 
 READ_ONLY = {
     "readOnlyHint": True,
@@ -637,7 +639,10 @@ async def faers_demographic_profile(
             client.counts(query, "patient.patientagegroup", 10),
             stratified_totals(client, query, AGE),
             client.counts(query, "primarysource.qualification", 10),
-            client.counts(query, "occurcountry", 15),
+            # occurcountry is a text field: counting it without .exact began returning
+            # openFDA 500s in September 2026, on every query. Every other text field
+            # here already counts on .exact.
+            client.counts(query, "occurcountry.exact", 15),
         )
     except FaersError as exc:
         fail(exc)

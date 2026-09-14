@@ -176,7 +176,7 @@ class TestDemographicAge:
                 return httpx.Response(200, json=meta_total(100))
             return httpx.Response(200, json={"meta": {}, "results": rows})
 
-        stub(handler)
+        recorder = stub(handler)
         out = await m.faers_demographic_profile(drug_name="X")
 
         assert out["total_reports"] == 100
@@ -184,6 +184,18 @@ class TestDemographicAge:
         assert out["age_bands_from_onset_age"] == [{"label": "18-64", "count": 40}, {"label": "65+", "count": 15}]
         assert out["age_bands_coverage_percent"] == 55.0
         assert "stratify_by='age'" in out["age_note"]
+        counted = [r.url.params.get("count") for r in recorder.requests if r.url.params.get("count")]
+        assert "occurcountry.exact" in counted
+        assert "occurcountry" not in counted
+
+
+class TestServerInfo:
+    def test_handshake_reports_faers_mcp_version(self):
+        """FastMCP 1.x otherwise falls back to the mcp library version."""
+        from faers import __version__
+
+        opts = m.mcp._mcp_server.create_initialization_options()
+        assert opts.server_version == __version__
 
 
 class TestWarmCache:
