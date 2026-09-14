@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "faers-mcp"
+dynamic = ["version"]
+description = "openFDA FAERS pharmacovigilance MCP server: case search, ROR/PRR, MGPS/EBGM, stratified signal detection."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "drvvek" }]
+keywords = ["mcp", "faers", "openfda", "pharmacovigilance", "signal-detection", "ebgm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Healthcare Industry",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    # 2.x renamed FastMCP -> MCPServer; this code targets the 1.x API.
+    "mcp[cli]>=1.0,<2",
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+    # EBGM / MGPS only. The other thirteen tools import without these.
+    "numpy>=1.26",
+    "scipy>=1.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/drvvek/faers_mcp"
+Repository = "https://github.com/drvvek/faers_mcp"
+Issues = "https://github.com/drvvek/faers_mcp/issues"
+
+[project.optional-dependencies]
+test = ["pytest>=8.0.0", "pytest-asyncio>=0.24.0"]
+
+[project.scripts]
+faers-mcp = "faers.server:main"
+
+[tool.setuptools]
+packages = ["faers"]
+
+[tool.setuptools.dynamic]
+version = { attr = "faers.__version__" }
+
+[tool.setuptools.package-data]
+faers = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
+asyncio_mode = "auto"
+markers = [
+    "live: hits the real openFDA API (deselected by default; run with -m live)",
+]
+addopts = "-m 'not live' -q"

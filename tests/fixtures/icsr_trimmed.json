@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "results": {
+      "total": 1,
+      "skip": 0,
+      "limit": 1
+    }
+  },
+  "results": [
+    {
+      "safetyreportid": "10886389",
+      "occurcountry": "DK",
+      "serious": "1",
+      "receivedate": "20150304",
+      "primarysource": {
+        "reportercountry": "DK",
+        "qualification": "5"
+      },
+      "patient": {
+        "patientsex": "1",
+        "patientagegroup": null,
+        "patientonsetage": "48",
+        "drug": [
+          {
+            "drugcharacterization": "1",
+            "medicinalproduct": "JARDIANCE",
+            "activesubstance": {
+              "activesubstancename": "EMPAGLIFLOZIN"
+            }
+          }
+        ],
+        "reaction": [
+          {
+            "reactionmeddraversionpt": "18.1",
+            "reactionmeddrapt": "Thirst",
+            "reactionoutcome": "3"
+          },
+          {
+            "reactionmeddraversionpt": "18.1",
+            "reactionmeddrapt": "Dry mouth",
+            "reactionoutcome": "3"
+          },
+          {
+            "reactionmeddraversionpt": "18.1",
+            "reactionmeddrapt": "Pancreatitis",
+            "reactionoutcome": "3"
+          },
+          {
+            "reactionmeddraversionpt": "18.1",
+            "reactionmeddrapt": "Pollakiuria",
+            "reactionoutcome": "3"
+          }
+        ]
+      }
+    }
+  ]
+}
