@@ -154,16 +154,29 @@ authenticating proxy, and never exposed to the public internet.
 
 ### Local install
 
+From a clone:
+
+```bash
+pip install -e .
+```
+
+Point the desktop client at that interpreter with an **absolute path**. Bare `faers-mcp` only works if the client's spawn PATH includes the Scripts directory; on Windows it often does not.
+
 ```json
 {
   "mcpServers": {
     "faers": {
-      "command": "faers-mcp",
+      "command": "C:\\Users\\<you>\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "args": ["-m", "faers"],
       "env": { "OPENFDA_API_KEY": "<key>" }
     }
   }
 }
 ```
+
+That block belongs in the client's `mcpServers` config (on Claude Desktop: `%APPDATA%\\Claude\\claude_desktop_config.json`). Fully quit and reopen the client after editing.
+
+This is not the same as Settings → Connectors → Local command, which runs in a remote sandbox and cannot see a Windows install. Do not use Connectors for a local stdio server. A hosted HTTP URL is only needed for Connectors → Remote.
 
 ## Tools
 
