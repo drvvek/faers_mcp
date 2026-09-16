@@ -170,7 +170,9 @@ Point the desktop client at that interpreter with an **absolute path**. Bare `fa
 }
 ```
 
-That block belongs in the client's `mcpServers` config (on Claude Desktop: `%APPDATA%\\Claude\\claude_desktop_config.json`). Fully quit and reopen the client after editing.
+`Python314` in the example is whatever interpreter you ran `pip install -e .` with — change the folder to match (3.10+).
+
+That block belongs in the client's `mcpServers` config (on Claude Desktop: `%APPDATA%\Claude\claude_desktop_config.json`). Fully quit and reopen the client after editing.
 
 This is not the same as Settings → Connectors → Local command, which runs in a remote sandbox and cannot see a Windows install. Do not use Connectors for a local stdio server. A hosted HTTP URL is only needed for Connectors → Remote.
 
