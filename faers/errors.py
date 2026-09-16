@@ -52,7 +52,7 @@ class UpstreamError(FaersError):
 class NotComputable(FaersError):
     """The request is well-formed but the answer cannot be derived from openFDA.
 
-    Used for the suspect-role basis on count tools: see docs/PLAN.md section 3.
+    Used for the suspect-role basis on count tools.
     """
 
     code = "not_computable"

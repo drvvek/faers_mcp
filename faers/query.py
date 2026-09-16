@@ -38,7 +38,7 @@ F_REPORT_ID = "safetyreportid"
 #   ASPIRIN AND drugcharacterization:1   545,046  (99.6% retained)
 #   ASPIRIN AND drugcharacterization:2   486,912  (89.0% retained)
 # The filtered counts sum to ~189% of the total, i.e. the clauses match
-# independently. See docs/PLAN.md section 2.1.
+# independently.
 
 ROLE_ANY = "any"
 ROLE_SUSPECT_VERIFIED = "suspect_verified"
@@ -140,7 +140,7 @@ def drug_clause(drug_name: str, role_basis: str = ROLE_ANY) -> str:
     """Build the drug clause.
 
     No drugcharacterization clause is ever emitted: it does not do what its name
-    suggests (see module docstring and docs/PLAN.md 2.1). Suspect scoping happens
+    suggests (see module docstring). Suspect scoping happens
     per-record in projection.verify_suspect() on the tools that hold records.
     """
     if role_basis not in ROLE_LABELS:
@@ -174,7 +174,7 @@ def date_clause(date_from: Optional[str], date_to: Optional[str]) -> Optional[st
 
     Either both or neither. A half-open range is rejected rather than silently
     widened, because a date filter must apply to every cell of a 2x2 or none of
-    them (see docs/PLAN.md section 4).
+    them.
     """
     if not date_from and not date_to:
         return None

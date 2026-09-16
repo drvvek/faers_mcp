@@ -4,8 +4,7 @@ OpenFDA FAERS MCP Server - tool definitions and entry point.
 Wraps the OpenFDA Drug Adverse Event API (https://api.fda.gov/drug/event.json)
 as fifteen pharmacovigilance tools. Run with `faers-mcp` or `python -m faers`.
 
-Read docs/PLAN.md for the evidence behind the design. The changes that alter
-answers relative to the original single-file server:
+The changes that alter answers relative to the original single-file server:
 
   * Clauses are joined with " AND ", not "+AND+". Passed through httpx's params
     dict the "+" arrived at openFDA as %2B, so every multi-clause query returned

@@ -5,9 +5,6 @@ server with 15 pharmacovigilance tools: case search, disproportionality (ROR/PRR
 Bayes signal scores (MGPS/EBGM), bulk screening, and confounder-adjusted versions of all of
 them.
 
-See [docs/PLAN.md](docs/PLAN.md) for the assessment behind the design, including the
-verified openFDA behaviours the server depends on.
-
 ## Layout
 
 ```
@@ -24,7 +21,6 @@ faers/
   fields.py       field catalogue served by faers_describe_fields
   errors.py       structured {code, reason, recovery} failures
 tests/            offline tests on recorded fixtures, plus live openFDA contract tests
-docs/PLAN.md      assessment, verified findings, design decisions
 ```
 
 ## Installation

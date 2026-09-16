@@ -2,8 +2,8 @@
 
 These pin undocumented behaviour the server depends on. They are skipped by
 default; run them with `pytest -m live` when you want to know whether openFDA
-has changed under you. A failure here is a signal to re-read docs/PLAN.md section 2,
-not necessarily a bug in this repo.
+has changed under you. A failure here is a signal that openFDA's undocumented
+behaviour shifted, not necessarily a bug in this repo.
 """
 
 from __future__ import annotations
