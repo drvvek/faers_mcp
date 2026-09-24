@@ -116,24 +116,37 @@ launch. A private repository works the same way provided the user's machine alre
 GitHub credentials (`gh auth`, a credential manager, or an SSH key) — `uvx` does not
 prompt. Caches build per machine under `~/.faers_mcp_cache`.
 
-### 2. PyPI
+### 2. Shared HTTP endpoint
+
+A single process serves the tools over Streamable HTTP. The openFDA key belongs on that
+**server process**, not in each client's config. The server reads `OPENFDA_API_KEY` from
+the environment; it does not load a `.env` file.
+
+Git Bash:
 
 ```bash
-python -m build && twine upload dist/*
+OPENFDA_API_KEY=<key> python -m faers --transport http --host 127.0.0.1 --port 8010
 ```
 
-The config then reduces to `"command": "uvx", "args": ["faers-mcp"]`.
+cmd:
 
-### 3. Shared HTTP endpoint
-
-A single process serves the tools over Streamable HTTP, and every client points at its URL:
-
-```bash
-OPENFDA_API_KEY=... faers-mcp --transport http --host 10.0.0.5 --port 8010
+```bat
+set OPENFDA_API_KEY=<key>
+python -m faers --transport http --host 127.0.0.1 --port 8010
 ```
+
+PowerShell:
+
+```powershell
+$env:OPENFDA_API_KEY="<key>"
+python -m faers --transport http --host 127.0.0.1 --port 8010
+```
+
+Use the same interpreter that has the package installed. Bind to loopback or a private
+interface. Then every client points at the URL only:
 
 ```json
-{ "mcpServers": { "faers": { "url": "http://10.0.0.5:8010/mcp" } } }
+{ "mcpServers": { "faers": { "url": "http://127.0.0.1:8010/mcp" } } }
 ```
 
 No per-user install, and the expensive caches — the EBGM background table, fitted priors,
@@ -145,7 +158,6 @@ authenticating proxy, and never exposed to the public internet.
 | | per-user quota | install effort | shared caches | auth |
 |---|---|---|---|---|
 | git + uvx | yes | none | no | n/a |
-| PyPI | yes | none | no | n/a |
 | shared HTTP | no — one key | none | yes | none built in |
 
 ### Local install
