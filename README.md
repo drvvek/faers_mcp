@@ -115,7 +115,9 @@ Each user adds the following to their MCP client config, with their own API key:
 ```
 
 There is nothing to clone and no virtualenv to manage; updates are picked up on the next
-launch. A private repository works the same way provided the user's machine already has
+launch. Bare `uvx` must be on the client's spawn PATH (same Windows trap as `faers-mcp`);
+if the client cannot find it, use Local install below with an absolute interpreter.
+A private repository works the same way provided the user's machine already has
 GitHub credentials (`gh auth`, a credential manager, or an SSH key) — `uvx` does not
 prompt. Caches build per machine under `~/.faers_mcp_cache`.
 
@@ -354,6 +356,7 @@ return compact cards by default and declare what was dropped in `fields_omitted`
 ## Tests
 
 ```bash
+pip install -e ".[test]"    # pytest is not a runtime dependency
 python -m pytest
 ```
 
@@ -372,7 +375,7 @@ python -m pytest -m live
 ## Example queries
 
 - *"What are the top adverse events for empagliflozin in FAERS?"*
-- *"Calculate ROR and PRR for metformin and lactic acidosis, adjusted for age"*
+- *"Calculate ROR and PRR for metformin hydrochloride and lactic acidosis, adjusted for age"*
 - *"Give me a demographic profile of levetiracetam rhabdomyolysis cases"*
 - *"Show the yearly trend of pancreatitis reports with sitagliptin"*
 - *"Find atorvastatin myopathy cases where atorvastatin is the suspect drug"*
