@@ -25,12 +25,14 @@ tests/            offline tests on recorded fixtures, plus live openFDA contract
 
 ## Installation
 
+From a clone:
+
 ```bash
-pip install -e .            # from a clone
-pip install -e ".[test]"    # with the test dependencies
+pip install -e .
+pip install -e ".[test]"    # if you want to run tests
 ```
 
-Or directly from the repository, with no clone or virtualenv:
+Or skip the clone:
 
 ```bash
 uvx --from git+https://github.com/drvvek/faers_mcp faers-mcp --version
@@ -45,23 +47,22 @@ Without a key: 1,000 requests/day and a count `limit` ceiling of 999.
 With a key: 120,000 requests/day and `limit` up to 1,000.
 Free key at https://open.fda.gov/apis/authentication/
 
-The key is read from `OPENFDA_API_KEY` and sent as an HTTP Basic auth header, never in the
-query string, so it stays out of URLs, proxy logs and crash traces. The key belongs in the client config or the environment, never in the repository;
-`.gitignore` excludes `.env`.
+Set `OPENFDA_API_KEY` in your MCP config or the process environment. It is sent as HTTP
+Basic auth, never in the query string. Do not commit it; `.gitignore` excludes `.env`.
 
 ## Running
 
-Use the same interpreter you installed into (`python -m faers`). The `faers-mcp` console
-script is equivalent only if that interpreter's Scripts directory is on PATH; on Windows
-it often is not.
+Run with the same interpreter you installed into:
 
 ```bash
-python -m faers                             # stdio - what MCP clients spawn
+python -m faers                               # stdio
 python -m faers --transport http --port 8010  # Streamable HTTP on 127.0.0.1:8010/mcp
 ```
 
-`FAERS_MCP_TRANSPORT`, `FAERS_MCP_HOST` and `FAERS_MCP_PORT` set the defaults. Binding
-HTTP to anything other than loopback prints a warning: the transport has no authentication.
+`faers-mcp` is the same entry point if that interpreter's Scripts directory is on your PATH.
+
+`FAERS_MCP_TRANSPORT`, `FAERS_MCP_HOST` and `FAERS_MCP_PORT` set the defaults. Binding HTTP
+off loopback prints a warning: the transport has no authentication.
 
 ## Interface
 
@@ -95,12 +96,11 @@ support MCP prompts can offer it directly.
 
 ## Deployment options
 
-The choice between them comes down to whether each user spends their own openFDA quota or
-all users share one key.
+Choose whether you spend your own openFDA quota or share one key.
 
-### 1. Git URL + `uvx` (per-user install)
+### 1. Git URL + `uvx`
 
-Each user adds the following to their MCP client config, with their own API key:
+Add this to your MCP config with your own key:
 
 ```json
 {
@@ -114,18 +114,16 @@ Each user adds the following to their MCP client config, with their own API key:
 }
 ```
 
-There is nothing to clone and no virtualenv to manage; updates are picked up on the next
-launch. Bare `uvx` must be on the client's spawn PATH (same Windows trap as `faers-mcp`);
-if the client cannot find it, use Local install below with an absolute interpreter.
-A private repository works the same way provided the user's machine already has
-GitHub credentials (`gh auth`, a credential manager, or an SSH key) — `uvx` does not
-prompt. Caches build per machine under `~/.faers_mcp_cache`.
+No clone and no virtualenv; updates apply on the next launch. `uvx` must be on the PATH
+your MCP host uses when it starts the server — otherwise use Local install with an
+absolute interpreter. A private repo needs GitHub credentials on that machine (`gh auth`,
+a credential manager, or an SSH key); `uvx` does not prompt. Caches land in
+`~/.faers_mcp_cache`.
 
 ### 2. Shared HTTP endpoint
 
-A single process serves the tools over Streamable HTTP. The openFDA key belongs on that
-**server process**, not in each client's config. The server reads `OPENFDA_API_KEY` from
-the environment; it does not load a `.env` file.
+One process serves Streamable HTTP. Put `OPENFDA_API_KEY` on that process; the server does
+not read a `.env` file.
 
 Git Bash:
 
@@ -147,33 +145,31 @@ $env:OPENFDA_API_KEY="<key>"
 python -m faers --transport http --host 127.0.0.1 --port 8010
 ```
 
-Use the same interpreter that has the package installed. Bind to loopback or a private
-interface. Then every client points at the URL only:
+Use the interpreter that has the package. Bind to loopback or a private interface. Your
+MCP config then only needs the URL:
 
 ```json
 { "mcpServers": { "faers": { "url": "http://127.0.0.1:8010/mcp" } } }
 ```
 
-No per-user install, and the expensive caches — the EBGM background table, fitted priors,
-stratified marginals — are built once and shared. The trade-offs: all users draw on one
-key's 120,000/day quota, the endpoint has no authentication of its own, and it is a single
-point of failure. It should be bound to a private interface or placed behind an
-authenticating proxy, and never exposed to the public internet.
+The EBGM background, priors and stratified marginals are built once. Everyone on that
+endpoint shares one key's 120,000/day quota. The transport has no authentication — keep it
+off the public internet, or put it behind a proxy.
 
-| | per-user quota | install effort | shared caches | auth |
+| | own quota | install | shared caches | auth |
 |---|---|---|---|---|
 | git + uvx | yes | none | no | n/a |
 | shared HTTP | no — one key | none | yes | none built in |
 
 ### Local install
 
-From a clone:
-
 ```bash
 pip install -e .
 ```
 
-Point the desktop client at that interpreter with an **absolute path**. Bare `faers-mcp` only works if the client's spawn PATH includes the Scripts directory; on Windows it often does not.
+Put an **absolute path** to that interpreter in your MCP config. On Claude Desktop that
+file is `%APPDATA%\Claude\claude_desktop_config.json`. Fully quit and reopen the app after
+editing.
 
 ```json
 {
@@ -187,11 +183,9 @@ Point the desktop client at that interpreter with an **absolute path**. Bare `fa
 }
 ```
 
-`Python314` in the example is whatever interpreter you ran `pip install -e .` with — change the folder to match (3.10+).
-
-That block belongs in the client's `mcpServers` config (on Claude Desktop: `%APPDATA%\Claude\claude_desktop_config.json`). Fully quit and reopen the client after editing.
-
-This is not the same as Settings → Connectors → Local command, which runs in a remote sandbox and cannot see a Windows install. Do not use Connectors for a local stdio server. A hosted HTTP URL is only needed for Connectors → Remote.
+`Python314` is an example: use the folder for the interpreter you ran `pip install -e .`
+with (3.10+). Settings → Connectors → Local command runs in a remote sandbox and will not
+see this install; use the config file, or Shared HTTP if you need a URL.
 
 ## Tools
 
