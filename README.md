@@ -51,10 +51,13 @@ query string, so it stays out of URLs, proxy logs and crash traces. The key belo
 
 ## Running
 
+Use the same interpreter you installed into (`python -m faers`). The `faers-mcp` console
+script is equivalent only if that interpreter's Scripts directory is on PATH; on Windows
+it often is not.
+
 ```bash
-faers-mcp                                   # stdio - what MCP clients spawn
-faers-mcp --transport http --port 8010      # Streamable HTTP on 127.0.0.1:8010/mcp
-python -m faers                             # same as faers-mcp
+python -m faers                             # stdio - what MCP clients spawn
+python -m faers --transport http --port 8010  # Streamable HTTP on 127.0.0.1:8010/mcp
 ```
 
 `FAERS_MCP_TRANSPORT`, `FAERS_MCP_HOST` and `FAERS_MCP_PORT` set the defaults. Binding
