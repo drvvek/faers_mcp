@@ -24,8 +24,8 @@ jobs:
 
   # Live contract tests hit the real openFDA API and pin undocumented behaviour
   # (.exact case sensitivity, the "time" key on date histograms, caret terms).
-  # They run on a schedule so an upstream change surfaces as a failed run rather
-  # than as silently wrong numbers - but never gate a pull request.
+  # They run on push to master/main, not on pull requests. continue-on-error keeps
+  # an upstream change visible as a failed step without failing the workflow.
   live:
     name: live openFDA contract
     runs-on: ubuntu-latest

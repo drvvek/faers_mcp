@@ -2,8 +2,9 @@
 
 Wraps the OpenFDA Drug Adverse Event API (`https://api.fda.gov/drug/event.json`) as an MCP
 server with 15 pharmacovigilance tools: case search, disproportionality (ROR/PRR), empirical
-Bayes signal scores (MGPS/EBGM), bulk screening, and confounder-adjusted versions of all of
-them.
+Bayes signal scores (MGPS/EBGM), and bulk screening. `faers_disproportionality` and
+`faers_ebgm` (and `faers_warm_cache`) accept `stratify_by` for confounder adjustment; the
+other tools do not.
 
 ## Layout
 
@@ -116,9 +117,7 @@ Add this to your MCP config with your own key:
 
 No clone and no virtualenv; updates apply on the next launch. `uvx` must be on the PATH
 your MCP host uses when it starts the server — otherwise use Local install with an
-absolute interpreter. A private repo needs GitHub credentials on that machine (`gh auth`,
-a credential manager, or an SSH key); `uvx` does not prompt. Caches land in
-`~/.faers_mcp_cache`.
+absolute interpreter. Caches land in `~/.faers_mcp_cache`.
 
 ### 2. Shared HTTP endpoint
 
@@ -184,8 +183,9 @@ editing.
 ```
 
 `Python314` is an example: use the folder for the interpreter you ran `pip install -e .`
-with (3.10+). Settings → Connectors → Local command runs in a remote sandbox and will not
-see this install; use the config file, or Shared HTTP if you need a URL.
+with (3.10+). On Hermes Desktop, Settings → Connectors → Local command runs in a remote
+sandbox and will not see this install; use the config file, or Shared HTTP if you need a
+URL. Claude Desktop and Cursor only need the JSON above.
 
 ## Tools
 
@@ -272,8 +272,9 @@ stratified result states its coverage.
 
 Year strata are not knowable in advance, so they are measured from the data and the
 negligible tail is pruned: FAERS spans 38 calendar years, but 1986–2003 hold **385 reports
-between them (0.002%)** while costing two calls each to stratify. `max_strata` (default 30)
-caps the number of strata; a narrower `date_from`/`date_to` window reduces it.
+between them (0.002%)** while costing two calls each to stratify. Years holding less than
+0.1% of the window are dropped internally, and more than 30 remaining years is refused.
+That cap is not a tool argument — pass a narrower `date_from`/`date_to` window instead.
 
 Year is the only stratifier with full coverage (`receivedate` is present on every report).
 On empagliflozin it produces the largest correction:
@@ -355,8 +356,9 @@ python -m pytest
 ```
 
 CI runs the offline suite on Python 3.10–3.12 for every push and pull request. The live
-contract suite runs on pushes only, never gates a PR, and needs `OPENFDA_API_KEY` as a
-repository secret to stay under the keyless quota.
+contract suite runs on pushes to `master`/`main` only (not on PRs), needs `OPENFDA_API_KEY`
+as a repository secret, and is `continue-on-error` so an openFDA behaviour change shows up
+as a failed step without turning the workflow red.
 
 Offline tests run against recorded fixtures. Contract tests that hit the live API — they
 pin undocumented openFDA behaviour such as `.exact` case sensitivity and the `time` key on

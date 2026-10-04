@@ -21,7 +21,7 @@ dependencies = [
     "mcp[cli]>=1.0,<2",
     "httpx>=0.27.0",
     "pydantic>=2.0.0",
-    # EBGM / MGPS only. The other thirteen tools import without these.
+    # EBGM / MGPS (faers_ebgm, faers_warm_cache). The remaining tools import without these.
     "numpy>=1.26",
     "scipy>=1.11",
 ]
